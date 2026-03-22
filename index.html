@@ -5,14 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Padre Pio">
 <meta name="theme-color" content="#1c2333">
 <title>Gestionale Minori – Consorzio Padre Pio</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
-:root{--ink:#1c2333;--ink2:#3d4a5c;--ink3:#6b7a8d;--ink4:#a8b3bf;--bg:#f5f6f8;--bg2:#eceef2;--white:#fff;--blu:#2d6be4;--blu2:#1a4fb0;--blu-light:#e8effe;--verde:#1e8a5e;--verde-light:#e6f5ef;--rosso:#c0392b;--rosso-light:#fdecea;--arancio:#d4600a;--arancio-light:#fdf0e6;--giallo:#b58800;--bordo:#dde1e8;--bordo2:#c8cdd6;--r:10px;--rs:6px;--sh3:0 8px 32px rgba(28,35,51,.14);}
+:root{--ink:#1c2333;--ink2:#3d4a5c;--ink3:#6b7a8d;--ink4:#a8b3bf;--bg:#f5f6f8;--bg2:#eceef2;--white:#fff;--blu:#2d6be4;--blu2:#1a4fb0;--blu-light:#e8effe;--verde:#1e8a5e;--verde-light:#e6f5ef;--rosso:#c0392b;--rosso-light:#fdecea;--arancio:#d4600a;--arancio-light:#fdf0e6;--giallo:#b58800;--giallo-light:#fdf8e1;--bordo:#dde1e8;--bordo2:#c8cdd6;--r:10px;--rs:6px;--sh3:0 8px 32px rgba(28,35,51,.14);}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.5;}
 #login-screen{display:none;position:fixed;inset:0;background:var(--ink);z-index:1000;align-items:center;justify-content:center;}
@@ -32,7 +31,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
 .ltoggle a{color:var(--blu);cursor:pointer;text-decoration:underline;}
 #app-shell{display:none;min-height:100vh;}
 #app-shell.show{display:flex;}
-.sidenav{width:228px;background:var(--ink);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+.sidenav{width:228px;background:var(--ink);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
 .snlogo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
 .snlogo .org{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:4px;}
 .snlogo .brand{font-family:'DM Serif Display',serif;font-size:18px;color:#fff;line-height:1.2;}
@@ -55,12 +54,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
 .btn-ghost{background:transparent;color:var(--ink2);border:1px solid var(--bordo2);}.btn-ghost:hover{background:var(--bg);}
 .btn-sm{padding:5px 11px;font-size:12px;}
 .page{display:none;padding:28px;}.page.active{display:block;}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
 .stat{background:var(--white);border:1px solid var(--bordo);border-radius:var(--r);padding:18px 20px;}
 .stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);font-weight:500;margin-bottom:6px;}
 .stat .val{font-size:32px;font-family:'DM Serif Display',serif;color:var(--ink);line-height:1;}
 .stat .sub{font-size:12px;color:var(--ink3);margin-top:4px;}
-.stat.blu{border-left:3px solid var(--blu);}.stat.verde{border-left:3px solid var(--verde);}.stat.arancio{border-left:3px solid var(--arancio);}.stat.giallo{border-left:3px solid var(--giallo);}
+.stat.blu{border-left:3px solid var(--blu);}
+.stat.verde{border-left:3px solid var(--verde);}
+.stat.arancio{border-left:3px solid var(--arancio);}
+.stat.giallo{border-left:3px solid var(--giallo);}
+.stat.rosso{border-left:3px solid var(--rosso);}
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .sec-hdr h2{font-family:'DM Serif Display',serif;font-size:16px;color:var(--ink);font-weight:400;}
 .twrap{background:var(--white);border:1px solid var(--bordo);border-radius:var(--r);overflow:hidden;}
@@ -69,10 +72,11 @@ thead th{background:var(--bg);padding:10px 16px;text-align:left;font-size:11px;f
 tbody tr{border-bottom:1px solid var(--bg2);cursor:pointer;transition:background .1s;}
 tbody tr:last-child{border-bottom:none;}
 tbody tr:hover{background:var(--blu-light);}
-tbody td{padding:12px 16px;font-size:13px;color:var(--ink2);vertical-align:middle;}
+tbody td{padding:11px 16px;font-size:13px;color:var(--ink2);vertical-align:middle;}
 .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;}
 .badge-verde{background:var(--verde-light);color:var(--verde);}
 .badge-arancio{background:var(--arancio-light);color:var(--arancio);}
+.badge-rosso{background:var(--rosso-light);color:var(--rosso);}
 .badge-grigio{background:var(--bg2);color:var(--ink3);}
 .av-sm{width:30px;height:30px;border-radius:50%;background:var(--blu-light);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--blu);margin-right:8px;vertical-align:middle;}
 .diario{display:flex;flex-direction:column;gap:10px;}
@@ -86,23 +90,55 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--ink2);vertical-align:middl
 .dop{font-size:11px;color:var(--ink4);margin-top:5px;}
 .modal-overlay{position:fixed;inset:0;background:rgba(28,35,51,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
-.modal{background:var(--white);border-radius:var(--r);width:100%;max-width:520px;box-shadow:var(--sh3);transform:translateY(16px);transition:transform .2s;}
+.modal{background:var(--white);border-radius:var(--r);width:100%;max-width:580px;box-shadow:var(--sh3);transform:translateY(16px);transition:transform .2s;max-height:90vh;overflow-y:auto;}
 .modal-overlay.open .modal{transform:translateY(0);}
-.mhdr{padding:18px 22px;border-bottom:1px solid var(--bordo);display:flex;align-items:center;justify-content:space-between;}
+.mhdr{padding:18px 22px;border-bottom:1px solid var(--bordo);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1;}
 .mhdr h3{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;}
 .mclose{width:28px;height:28px;border:none;background:var(--bg);border-radius:var(--rs);cursor:pointer;font-size:16px;color:var(--ink3);}
-.mbody{padding:20px 22px;}.mfoot{padding:14px 22px;border-top:1px solid var(--bordo);display:flex;gap:8px;justify-content:flex-end;}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}.fcol{grid-column:1/-1;}
+.mbody{padding:20px 22px;}
+.mfoot{padding:14px 22px;border-top:1px solid var(--bordo);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:var(--white);}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fcol{grid-column:1/-1;}
 .field{display:flex;flex-direction:column;gap:5px;}
 .field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);}
-.field input,.field select{padding:8px 12px;border:1px solid var(--bordo2);border-radius:var(--rs);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--white);width:100%;}
-.sbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
-.swrap{position:relative;flex:1;}
+.field input,.field select,.field textarea{padding:8px 12px;border:1px solid var(--bordo2);border-radius:var(--rs);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--white);width:100%;}
+.sbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.swrap{position:relative;flex:1;min-width:200px;}
 .swrap input{width:100%;padding:9px 14px 9px 36px;border:1px solid var(--bordo2);border-radius:var(--rs);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--white);}
 .sico{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--ink4);}
 .fcard{background:var(--white);border:1px solid var(--bordo);border-radius:var(--r);overflow:hidden;margin-bottom:16px;}
 .fcard-hdr{padding:14px 20px;border-bottom:1px solid var(--bordo);background:var(--bg);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
 .fcard-body{padding:20px;}
+.alert-box{background:var(--white);border:1px solid var(--bordo);border-radius:var(--r);overflow:hidden;margin-bottom:24px;}
+.alert-box-hdr{padding:14px 20px;border-bottom:1px solid var(--bordo);display:flex;align-items:center;justify-content:space-between;}
+.alert-box-hdr h2{font-family:'DM Serif Display',serif;font-size:16px;font-weight:400;}
+.alert-cnt{font-size:12px;font-weight:600;}
+.alert-list{display:flex;flex-direction:column;}
+.alert-item{display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--bg2);cursor:pointer;transition:background .1s;}
+.alert-item:last-child{border-bottom:none;}
+.alert-item:hover{background:var(--bg);}
+.adot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.adot.r{background:var(--rosso);}
+.adot.a{background:var(--arancio);}
+.adot.g{background:var(--giallo);}
+.adot.v{background:var(--verde);}
+.abody{flex:1;}
+.anome{font-size:13px;font-weight:600;color:var(--ink);}
+.adesc{font-size:12px;color:var(--ink3);margin-top:2px;}
+.agg{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+.agg.r{background:var(--rosso-light);color:var(--rosso);}
+.agg.a{background:var(--arancio-light);color:var(--arancio);}
+.agg.g{background:var(--giallo-light);color:var(--giallo);}
+.alert-empty{padding:24px 20px;text-align:center;color:var(--ink3);font-size:13px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--white);border:1px solid var(--bordo);border-radius:var(--r);padding:18px 20px;}
+.stat-card h3{font-family:'DM Serif Display',serif;font-size:14px;font-weight:400;color:var(--ink3);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px;}
+.nb-list{display:flex;flex-direction:column;gap:8px;}
+.nb-item{display:flex;align-items:center;gap:10px;font-size:13px;}
+.nb-bw{flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;}
+.nb-b{height:100%;border-radius:3px;}
+.nb-nome{min-width:100px;color:var(--ink2);font-size:12px;}
+.nb-num{font-weight:600;color:var(--ink);min-width:20px;text-align:right;}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:12px 20px;border-radius:var(--r);font-size:13px;box-shadow:var(--sh3);opacity:0;transform:translateY(10px);transition:opacity .25s,transform .25s;pointer-events:none;z-index:9999;}
 .toast.show{opacity:1;transform:translateY(0);}.toast.ok{background:var(--verde);}.toast.err{background:var(--rosso);}
 .empty{text-align:center;padding:48px 24px;color:var(--ink3);}
@@ -111,10 +147,11 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--ink2);vertical-align:middl
 .empty p{font-size:13px;}
 .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg);}}
-@media(max-width:768px){.sidenav{width:100%;height:56px;bottom:auto;flex-direction:row;overflow-x:auto;}.main{margin-left:0;margin-top:56px;}.stats{grid-template-columns:1fr 1fr;}.fgrid{grid-template-columns:1fr;}}
+@media(max-width:768px){.sidenav{width:100%;height:auto;position:relative;}.main{margin-left:0;}.stats,.stats-grid{grid-template-columns:1fr 1fr;}.fgrid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
+
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo"><div class="org">Consorzio</div><div class="brand">Padre <span>Pio</span></div></div>
@@ -126,35 +163,83 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--ink2);vertical-align:middl
     <div class="ltoggle"><span id="ltxt">Non hai un account?</span> <a onclick="toggleMode()"><span id="llnk">Registrati</span></a></div>
   </div>
 </div>
+
 <div id="app-shell">
   <nav class="sidenav">
     <div class="snlogo"><div class="org">Consorzio</div><div class="brand">Padre <span>Pio</span></div></div>
     <div class="snuser"><div class="avatar" id="nav-av">EP</div><div><div class="name" id="nav-nome">Educatore</div><div class="role">Operatore</div></div></div>
     <div class="snlabel">Menu</div>
     <div class="snlink active" onclick="navTo('dashboard')">📊 Dashboard</div>
-    <div class="snlink" onclick="navTo('minori')">👤 I miei minori</div>
+    <div class="snlink" onclick="navTo('minori')">👤 Minori</div>
     <div class="snlink" onclick="navTo('diario')">📋 Diario globale</div>
+    <div class="snlink" onclick="navTo('statistiche')">📈 Statistiche</div>
     <div class="snlabel">Account</div>
     <div class="snlink" onclick="navTo('profilo')">⚙ Profilo</div>
     <div class="snbottom"><div class="snlink" onclick="doLogout()">← Esci</div></div>
   </nav>
+
   <div class="main">
-    <div class="topbar"><div class="topbar-title" id="ttitle">Dashboard <small>Panoramica</small></div><button class="btn btn-primary btn-sm" onclick="apriModalNuovo()">+ Nuovo minore</button></div>
+    <div class="topbar">
+      <div class="topbar-title" id="ttitle">Dashboard <small>Panoramica e alert</small></div>
+      <button class="btn btn-primary btn-sm" onclick="apriModalNuovo()">+ Nuovo minore</button>
+    </div>
+
+    <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="stats">
-        <div class="stat blu"><div class="lbl">Minori in carico</div><div class="val" id="s-tot">—</div><div class="sub">totale</div></div>
-        <div class="stat verde"><div class="lbl">PEI compilati</div><div class="val" id="s-pei">—</div><div class="sub">su <span id="s-pei-tot">0</span></div></div>
-        <div class="stat arancio"><div class="lbl">Interventi oggi</div><div class="val" id="s-oggi">—</div><div class="sub">registrati</div></div>
-        <div class="stat giallo"><div class="lbl">Da aggiornare</div><div class="val" id="s-agg">—</div><div class="sub">&gt;7 giorni</div></div>
+        <div class="stat blu"><div class="lbl">Minori in carico</div><div class="val" id="s-tot">—</div><div class="sub">totale attivi</div></div>
+        <div class="stat rosso"><div class="lbl">Alert urgenti</div><div class="val" id="s-alert">—</div><div class="sub">entro 30 giorni</div></div>
+        <div class="stat arancio"><div class="lbl">Prossimi ai 18 anni</div><div class="val" id="s-18">—</div><div class="sub">entro 90 giorni</div></div>
+        <div class="stat giallo"><div class="lbl">PEI da compilare</div><div class="val" id="s-pei">—</div><div class="sub">non ancora compilati</div></div>
       </div>
+
+      <div class="alert-box">
+        <div class="alert-box-hdr">
+          <h2>⚠ Alert scadenze e situazioni critiche</h2>
+          <span class="alert-cnt" id="alert-cnt-lbl"></span>
+        </div>
+        <div class="alert-list" id="alert-list"><div class="alert-empty">Caricamento…</div></div>
+      </div>
+
       <div class="sec-hdr"><h2>Ultimi interventi</h2><button class="btn btn-ghost btn-sm" onclick="navTo('diario')">Vedi tutti →</button></div>
       <div class="diario" id="dash-diario"><div class="empty"><div class="ico">📋</div><h3>Nessun intervento ancora</h3></div></div>
     </div>
+
+    <!-- MINORI -->
     <div class="page" id="page-minori">
-      <div class="sbar"><div class="swrap"><span class="sico">🔍</span><input type="text" placeholder="Cerca…" id="cerca" oninput="filtra()"></div><select class="btn btn-ghost btn-sm" id="filtro-stato" onchange="filtra()" style="cursor:pointer;"><option value="">Tutti</option><option value="attivo">In carico</option><option value="trasferito">Trasferito</option><option value="chiuso">Chiuso</option></select></div>
-      <div class="twrap"><table><thead><tr><th>Minore</th><th>Età</th><th>Nazionalità</th><th>Ingresso</th><th>PEI</th><th>Stato</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
+      <div class="sbar">
+        <div class="swrap"><span class="sico">🔍</span><input type="text" placeholder="Cerca per nome, nazionalità…" id="cerca" oninput="filtra()"></div>
+        <select class="btn btn-ghost btn-sm" id="filtro-stato" onchange="filtra()" style="cursor:pointer;"><option value="">Tutti gli stati</option><option value="attivo">In carico</option><option value="trasferito">Trasferito</option><option value="chiuso">Chiuso</option></select>
+        <select class="btn btn-ghost btn-sm" id="filtro-as" onchange="filtra()" style="cursor:pointer;"><option value="">Tutti gli AS</option></select>
+      </div>
+      <div class="twrap">
+        <table>
+          <thead><tr><th>Minore</th><th>Età</th><th>Nazionalità</th><th>AS Riferimento</th><th>Educatore</th><th>PEI</th><th>Stato</th><th>Alert</th><th></th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
     </div>
+
+    <!-- DIARIO -->
     <div class="page" id="page-diario"><div class="diario" id="diario-globale"></div></div>
+
+    <!-- STATISTICHE -->
+    <div class="page" id="page-statistiche">
+      <div class="stats">
+        <div class="stat blu"><div class="lbl">Totale minori</div><div class="val" id="st-tot">—</div><div class="sub">in carico</div></div>
+        <div class="stat verde"><div class="lbl">PEI compilati</div><div class="val" id="st-pei">—</div><div class="sub">su <span id="st-pei-tot">0</span></div></div>
+        <div class="stat arancio"><div class="lbl">Prossimi ai 18</div><div class="val" id="st-18">—</div><div class="sub">entro 90 giorni</div></div>
+        <div class="stat giallo"><div class="lbl">Scadenze entro 60gg</div><div class="val" id="st-scad">—</div><div class="sub">PdS, STP, tessera</div></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><h3>Nazionalità</h3><div class="nb-list" id="st-naz"></div></div>
+        <div class="stat-card"><h3>Fasce d'età</h3><div class="nb-list" id="st-eta"></div></div>
+        <div class="stat-card"><h3>Assistenti sociali</h3><div class="nb-list" id="st-as"></div></div>
+        <div class="stat-card"><h3>Educatori di riferimento</h3><div class="nb-list" id="st-edu"></div></div>
+      </div>
+    </div>
+
+    <!-- PROFILO -->
     <div class="page" id="page-profilo">
       <div class="fcard" style="max-width:480px;">
         <div class="fcard-hdr">Il mio profilo</div>
@@ -165,24 +250,51 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--ink2);vertical-align:middl
             <div class="field fcol"><label>Struttura</label><input type="text" id="p-struttura"></div>
             <div class="field fcol"><label>Email</label><input type="email" id="p-email" disabled style="opacity:.6"></div>
           </div>
-          <div style="margin-top:16px;display:flex;gap:8px;"><button class="btn btn-primary" onclick="salvaProfilo()">Salva</button><button class="btn btn-ghost" onclick="doLogout()">Esci</button></div>
+          <div style="margin-top:16px;display:flex;gap:8px;">
+            <button class="btn btn-primary" onclick="salvaProfilo()">Salva</button>
+            <button class="btn btn-ghost" onclick="doLogout()">Esci</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- MODAL NUOVO MINORE -->
 <div class="modal-overlay" id="modal-nuovo">
   <div class="modal">
     <div class="mhdr"><h3>Nuovo minore</h3><button class="mclose" onclick="chiudiModal('modal-nuovo')">×</button></div>
-    <div class="mbody"><div class="fgrid"><div class="field"><label>Cognome *</label><input type="text" id="m-cognome"></div><div class="field"><label>Nome *</label><input type="text" id="m-nome"></div><div class="field"><label>Data nascita</label><input type="date" id="m-dob"></div><div class="field"><label>Nazionalità</label><input type="text" id="m-naz"></div><div class="field fcol"><label>Struttura</label><input type="text" id="m-struttura"></div></div></div>
-    <div class="mfoot"><button class="btn btn-ghost" onclick="chiudiModal('modal-nuovo')">Annulla</button><button class="btn btn-primary" id="btn-crea" onclick="creaMinore()">Crea cartella</button></div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div class="field"><label>Cognome *</label><input type="text" id="m-cognome"></div>
+        <div class="field"><label>Nome *</label><input type="text" id="m-nome"></div>
+        <div class="field"><label>Data nascita</label><input type="date" id="m-dob"></div>
+        <div class="field"><label>Nazionalità</label><input type="text" id="m-naz"></div>
+        <div class="field fcol"><label>Struttura</label><input type="text" id="m-struttura"></div>
+        <div class="field"><label>Assistente Sociale di riferimento</label><input type="text" id="m-as"></div>
+        <div class="field"><label>Educatore di riferimento</label><input type="text" id="m-edu"></div>
+        <div class="field"><label>Mediatore culturale</label><input type="text" id="m-med"></div>
+        <div class="field"><label>Psicologo di riferimento</label><input type="text" id="m-psi"></div>
+        <div class="field"><label>Scadenza PdS</label><input type="date" id="m-pds-scad"></div>
+        <div class="field"><label>Scadenza STP / Tessera sanitaria</label><input type="date" id="m-stp-scad"></div>
+        <div class="field"><label>Scadenza prosieguo amm. (21° anno)</label><input type="date" id="m-pros-scad"></div>
+        <div class="field"><label>Prossima relazione semestrale</label><input type="date" id="m-rel-sem"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="chiudiModal('modal-nuovo')">Annulla</button>
+      <button class="btn btn-primary" id="btn-crea" onclick="creaMinore()">Crea cartella</button>
+    </div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <script>
 var SUPA_URL='https://hvhoxeaycrwvmrufloqy.supabase.co';
 var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2aG94ZWF5Y3J3dm1ydWZsb3F5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwNDM3MTUsImV4cCI6MjA4OTYxOTcxNX0.5ppOh7cJIB2qdft40I9uLDiP3vsUiBV7jr9klJ304M8';
 var db=null,io=null,reg=false,minori=[],interventi=[];
+
 window.addEventListener('load',function(){
   var t=0,loop=setInterval(function(){
     t++;
@@ -190,13 +302,15 @@ window.addEventListener('load',function(){
       clearInterval(loop);
       db=window.supabase.createClient(SUPA_URL,SUPA_KEY);
       db.auth.getSession().then(function(r){
-        if(r.data&&r.data.session){avvia(r.data.session);}
-        else{document.getElementById('login-screen').classList.add('show');}
+        if(r.data&&r.data.session)avvia(r.data.session);
+        else document.getElementById('login-screen').classList.add('show');
       }).catch(function(){document.getElementById('login-screen').classList.add('show');});
     }else if(t>30){clearInterval(loop);document.getElementById('login-screen').classList.add('show');}
   },200);
 });
+
 function toggleMode(){reg=!reg;document.getElementById('ltitolo').textContent=reg?'Crea account':'Accedi al gestionale';document.getElementById('ltxt').textContent=reg?'Hai già un account?':'Non hai un account?';document.getElementById('llnk').textContent=reg?'Accedi':'Registrati';document.getElementById('lbtn').textContent=reg?'Crea account':'Accedi';document.getElementById('lerr').style.display='none';}
+
 async function doLogin(){
   var email=document.getElementById('lemail').value.trim(),pw=document.getElementById('lpassword').value;
   if(!email||!pw){mostraErr('Inserisci email e password');return;}
@@ -212,30 +326,238 @@ async function doLogin(){
     mostraErr(m);btn.textContent=reg?'Crea account':'Accedi';btn.disabled=false;
   }
 }
+
 function mostraErr(msg,info){var el=document.getElementById('lerr');el.textContent=msg;el.style.display='block';el.style.background=info?'#e6f5ef':'';el.style.color=info?'#1e8a5e':'';}
-async function avvia(session){io=session.user;document.getElementById('login-screen').classList.remove('show');document.getElementById('app-shell').classList.add('show');document.getElementById('p-email').value=io.email||'';var r=await db.from('educatori').select('nome,cognome').eq('id',io.id).single();if(r.data)aggNome(r.data.nome,r.data.cognome);await caricaDati();}
+
+async function avvia(session){
+  io=session.user;
+  document.getElementById('login-screen').classList.remove('show');
+  document.getElementById('app-shell').classList.add('show');
+  document.getElementById('p-email').value=io.email||'';
+  var r=await db.from('educatori').select('nome,cognome').eq('id',io.id).single();
+  if(r.data)aggNome(r.data.nome,r.data.cognome);
+  await caricaDati();
+}
+
 async function doLogout(){await db.auth.signOut();location.reload();}
-async function caricaDati(){var r1=await db.from('minori').select('*').order('creato_il',{ascending:false});var r2=await db.from('interventi').select('*').order('data',{ascending:false});minori=r1.data||[];interventi=r2.data||[];aggiornaDash();renderTabella();}
-function navTo(p){document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});document.querySelectorAll('.snlink').forEach(function(x){x.classList.remove('active');});document.getElementById('page-'+p).classList.add('active');var idx={dashboard:0,minori:1,diario:2,profilo:3}[p];if(idx!==undefined)document.querySelectorAll('.snlink')[idx].classList.add('active');var titoli={dashboard:['Dashboard','Panoramica'],minori:['I miei minori','Gestione cartelle'],diario:['Diario globale','Tutti gli interventi'],profilo:['Profilo','Account']};var t=titoli[p]||[p,''];document.getElementById('ttitle').innerHTML=t[0]+' <small>'+t[1]+'</small>';if(p==='dashboard')aggiornaDash();if(p==='minori')renderTabella();if(p==='diario')renderDiario();if(p==='profilo')caricaProfilo();}
-async function caricaProfilo(){var r=await db.from('educatori').select('*').eq('id',io.id).single();if(r.data){document.getElementById('p-nome').value=r.data.nome||'';document.getElementById('p-cognome').value=r.data.cognome||'';document.getElementById('p-struttura').value=r.data.struttura||'';aggNome(r.data.nome,r.data.cognome);}}
-async function salvaProfilo(){var nome=document.getElementById('p-nome').value.trim(),cognome=document.getElementById('p-cognome').value.trim(),struttura=document.getElementById('p-struttura').value.trim();var r=await db.from('educatori').upsert({id:io.id,nome:nome,cognome:cognome,struttura:struttura,email:io.email});if(r.error){toast('Errore: '+r.error.message,'err');return;}aggNome(nome,cognome);toast('Profilo salvato','ok');}
-function aggNome(nome,cognome){var n=[nome,cognome].filter(Boolean).join(' ')||'Educatore';var i=[(nome||'').charAt(0),(cognome||'').charAt(0)].filter(Boolean).join('').toUpperCase()||'EP';document.getElementById('nav-nome').textContent=n;document.getElementById('nav-av').textContent=i;}
-function apriModalNuovo(){['m-cognome','m-nome','m-struttura','m-naz'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('m-dob').value='';apriModal('modal-nuovo');}
-async function creaMinore(){var cognome=document.getElementById('m-cognome').value.trim(),nome=document.getElementById('m-nome').value.trim();if(!cognome&&!nome){toast('Inserisci almeno il nome','err');return;}var btn=document.getElementById('btn-crea');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;var r=await db.from('minori').insert({educatore_id:io.id,cognome:cognome,nome:nome,dob:document.getElementById('m-dob').value||null,nazionalita:document.getElementById('m-naz').value.trim(),struttura:document.getElementById('m-struttura').value.trim(),stato:'attivo'}).select().single();btn.textContent='Crea cartella';btn.disabled=false;if(r.error){toast('Errore: '+r.error.message,'err');return;}minori.unshift(r.data);chiudiModal('modal-nuovo');toast('Cartella creata!','ok');setTimeout(function(){apriCartella(r.data.id);},400);}
-function apriCartella(id){localStorage.setItem('minore_id',id);localStorage.setItem('gest_url',window.location.href);window.location.href='cartella-minore-app.html';}
-function renderTabella(){var tbody=document.getElementById('tbody'),q=(document.getElementById('cerca').value||'').toLowerCase(),stato=document.getElementById('filtro-stato').value;var lista=minori.filter(function(m){if(stato&&(m.stato||'attivo')!==stato)return false;if(q)return(m.cognome||'').toLowerCase().includes(q)||(m.nome||'').toLowerCase().includes(q)||(m.nazionalita||'').toLowerCase().includes(q);return true;});if(!lista.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty"><div class="ico">👤</div><h3>'+(minori.length?'Nessun risultato':'Nessun minore ancora')+'</h3><p>'+(minori.length?'Cambia filtri.':'Premi + Nuovo minore.')+'</p></div></td></tr>';return;}tbody.innerHTML=lista.map(function(m){var ini=[(m.cognome||'').charAt(0),(m.nome||'').charAt(0)].filter(Boolean).join('').toUpperCase()||'?';var nome=[m.cognome,m.nome].filter(Boolean).join(' ')||'—';var eta=m.dob?Math.floor((Date.now()-new Date(m.dob))/(365.25*24*3600*1000))+'a.':'—';var pei=m.pei_aree&&Array.isArray(m.pei_aree)&&m.pei_aree.some(function(a){return a.obiettivi&&a.obiettivi.length;});var s=m.stato||'attivo';var bs={attivo:'badge-verde',trasferito:'badge-arancio',chiuso:'badge-grigio'}[s]||'badge-grigio';return'<tr onclick="apriCartella(\''+m.id+'\')">'+'<td><span class="av-sm">'+esc(ini)+'</span><strong>'+esc(nome)+'</strong></td>'+'<td>'+eta+'</td><td>'+esc(m.nazionalita||'—')+'</td>'+'<td>'+(m.ingresso?fmtDate(m.ingresso):'—')+'</td>'+'<td><span class="badge '+(pei?'badge-verde':'badge-grigio')+'">'+(pei?'✓ Compilato':'Da fare')+'</span></td>'+'<td><span class="badge '+bs+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</span></td>'+'<td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();apriCartella(\''+m.id+'\')">Apri →</button></td>'+'</tr>';}).join('');}
+
+async function caricaDati(){
+  var r1=await db.from('minori').select('*').order('creato_il',{ascending:false});
+  var r2=await db.from('interventi').select('*').order('data',{ascending:false});
+  minori=r1.data||[];interventi=r2.data||[];
+  aggiornaDash();renderTabella();aggiornaFiltroAS();
+}
+
+// ══════ CALCOLI DATE ══════
+function diffGiorni(dataStr){if(!dataStr)return null;var o=new Date();o.setHours(0,0,0,0);return Math.ceil((new Date(dataStr+'T12:00:00')-o)/(864e5));}
+function etaAnni(dob){if(!dob)return null;return Math.floor((new Date()-new Date(dob+'T12:00:00'))/(365.25*864e5));}
+function giorniAl18(dob){if(!dob)return null;var d=new Date(dob+'T12:00:00');var c=new Date(d.getFullYear()+18,d.getMonth(),d.getDate());var o=new Date();o.setHours(0,0,0,0);return Math.ceil((c-o)/864e5);}
+function giorniAl21(dob){if(!dob)return null;var d=new Date(dob+'T12:00:00');var c=new Date(d.getFullYear()+21,d.getMonth(),d.getDate());var o=new Date();o.setHours(0,0,0,0);return Math.ceil((c-o)/864e5);}
+function colore(g){if(g===null)return null;if(g<=30)return'r';if(g<=60)return'a';if(g<=90)return'g';return'v';}
+function lblGg(g){if(g===null)return'';if(g<0)return'SCADUTO da '+Math.abs(g)+'gg';if(g===0)return'SCADE OGGI';return'tra '+g+' giorni';}
+
+// ══════ ALERT ══════
+function generaAlert(){
+  var al=[];
+  minori.forEach(function(m){
+    if((m.stato||'attivo')!=='attivo')return;
+    var nome=[m.cognome,m.nome].filter(Boolean).join(' ')||'—';
+    var g;
+    // 18° compleanno
+    g=giorniAl18(m.dob);
+    if(g!==null&&g<=90)al.push({nome:nome,desc:'🎂 Compie 18 anni — avviare prosieguo amministrativo',g:g,c:colore(g),id:m.id});
+    // PdS
+    g=diffGiorni(m.pds_scadenza);
+    if(g!==null&&g<=60)al.push({nome:nome,desc:'🪪 Permesso di soggiorno in scadenza',g:g,c:colore(g),id:m.id});
+    // STP / tessera
+    g=diffGiorni(m.stp_scadenza_doc);
+    if(g!==null&&g<=60)al.push({nome:nome,desc:'🏥 STP / Tessera sanitaria in scadenza',g:g,c:colore(g),id:m.id});
+    // Prosieguo 21°
+    g=giorniAl21(m.dob);
+    if(g!==null&&g<=90)al.push({nome:nome,desc:'⚖ Scadenza prosieguo amministrativo (21° anno)',g:g,c:colore(g),id:m.id});
+    // Relazione semestrale
+    g=diffGiorni(m.relazione_sem_prossima);
+    if(g!==null&&g<=30)al.push({nome:nome,desc:'📄 Relazione semestrale da inviare ai servizi sociali',g:g,c:colore(g),id:m.id});
+    // PEI non compilato dopo 14 giorni
+    if(!m.pei_compilato&&m.ingresso){var gI=diffGiorni(m.ingresso);if(gI!==null&&gI<=-14)al.push({nome:nome,desc:'📋 PEI non compilato (oltre 14 giorni dall\'ingresso)',g:0,c:'r',id:m.id});}
+    // Nessun intervento da 7+ giorni
+    var ultI=interventi.filter(function(i){return i.minore_id===m.id;});
+    if(ultI.length){var diffI=Math.floor((new Date()-new Date(ultI[0].data+'T12:00:00'))/864e5);if(diffI>=7)al.push({nome:nome,desc:'📝 Nessun intervento nel diario da '+diffI+' giorni',g:0,c:diffI>=14?'r':'a',id:m.id});}
+  });
+  al.sort(function(a,b){var pr={r:1,a:2,g:3,v:4};return (pr[a.c]||5)-(pr[b.c]||5)||a.g-b.g;});
+  return al;
+}
+
+function renderAlert(){
+  var al=generaAlert();
+  var urgenti=al.filter(function(a){return a.c==='r';}).length;
+  document.getElementById('s-alert').textContent=urgenti;
+  document.getElementById('alert-cnt-lbl').textContent=al.length+' alert attivi';
+  document.getElementById('alert-cnt-lbl').style.color=urgenti>0?'var(--rosso)':'var(--ink3)';
+  var el=document.getElementById('alert-list');
+  if(!al.length){el.innerHTML='<div class="alert-empty">✅ Nessuna scadenza urgente nei prossimi 90 giorni</div>';return;}
+  el.innerHTML=al.map(function(a){
+    return '<div class="alert-item" onclick="apriCartella(\''+a.id+'\')">'+'<div class="adot '+a.c+'"></div>'+'<div class="abody"><div class="anome">'+esc(a.nome)+'</div><div class="adesc">'+a.desc+'</div></div>'+(a.g!==0?'<span class="agg '+a.c+'">'+lblGg(a.g)+'</span>':'')+'</div>';
+  }).join('');
+}
+
+// ══════ DASHBOARD ══════
+function aggiornaDash(){
+  var att=minori.filter(function(m){return(m.stato||'attivo')==='attivo';});
+  document.getElementById('s-tot').textContent=att.length;
+  document.getElementById('s-18').textContent=att.filter(function(m){var g=giorniAl18(m.dob);return g!==null&&g<=90;}).length;
+  document.getElementById('s-pei').textContent=att.filter(function(m){return!m.pei_compilato;}).length;
+  renderAlert();
+  var rec=interventi.slice(0,5);
+  var el=document.getElementById('dash-diario');
+  if(!rec.length){el.innerHTML='<div class="empty"><div class="ico">📋</div><h3>Nessun intervento ancora</h3></div>';return;}
+  el.innerHTML=rec.map(function(i){var m=minori.find(function(x){return x.id===i.minore_id;});return renderEntry(i,m?[m.cognome,m.nome].filter(Boolean).join(' '):'—');}).join('');
+}
+
+// ══════ STATISTICHE ══════
+function aggiornaStatistiche(){
+  var att=minori.filter(function(m){return(m.stato||'attivo')==='attivo';});
+  document.getElementById('st-tot').textContent=att.length;
+  var pei=att.filter(function(m){return m.pei_compilato;}).length;
+  document.getElementById('st-pei').textContent=pei;document.getElementById('st-pei-tot').textContent=att.length;
+  document.getElementById('st-18').textContent=att.filter(function(m){var g=giorniAl18(m.dob);return g!==null&&g<=90;}).length;
+  document.getElementById('st-scad').textContent=att.filter(function(m){var gP=diffGiorni(m.pds_scadenza),gS=diffGiorni(m.stp_scadenza_doc);return(gP!==null&&gP<=60)||(gS!==null&&gS<=60);}).length;
+  function renderNbList(elId,data,color){
+    var arr=Object.entries(data).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+    var mx=arr[0]?arr[0][1]:1;
+    document.getElementById(elId).innerHTML=arr.map(function(e){return'<div class="nb-item"><span class="nb-nome">'+esc(e[0])+'</span><div class="nb-bw"><div class="nb-b" style="width:'+Math.round(e[1]/mx*100)+'%;background:'+color+';"></div></div><span class="nb-num">'+e[1]+'</span></div>';}).join('')||'<div style="color:var(--ink3);font-size:13px;">Nessun dato</div>';}
+  var naz={};att.forEach(function(m){var n=m.nazionalita||'Non specificata';naz[n]=(naz[n]||0)+1;});renderNbList('st-naz',naz,'var(--blu)');
+  var eta={'< 14 anni':0,'14-15 anni':0,'16-17 anni':0,'18+ anni':0};att.forEach(function(m){var e=etaAnni(m.dob);if(e===null)return;if(e<14)eta['< 14 anni']++;else if(e<16)eta['14-15 anni']++;else if(e<18)eta['16-17 anni']++;else eta['18+ anni']++;});renderNbList('st-eta',eta,'var(--arancio)');
+  var as={};att.forEach(function(m){var n=m.assistente_sociale||'Non assegnato';as[n]=(as[n]||0)+1;});renderNbList('st-as',as,'var(--verde)');
+  var edu={};att.forEach(function(m){var n=m.educatore_ref||'Non assegnato';edu[n]=(edu[n]||0)+1;});renderNbList('st-edu',edu,'#7c3aed');
+}
+
+// ══════ TABELLA MINORI ══════
+function aggiornaFiltroAS(){
+  var sel=document.getElementById('filtro-as');var val=sel.value;
+  var set=new Set(minori.map(function(m){return m.assistente_sociale;}).filter(Boolean));
+  sel.innerHTML='<option value="">Tutti gli AS</option>';
+  set.forEach(function(a){var o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o);});
+  sel.value=val;
+}
+
+function renderTabella(){
+  var tbody=document.getElementById('tbody');
+  var q=(document.getElementById('cerca').value||'').toLowerCase();
+  var stato=document.getElementById('filtro-stato').value;
+  var as=document.getElementById('filtro-as').value;
+  var lista=minori.filter(function(m){
+    if(stato&&(m.stato||'attivo')!==stato)return false;
+    if(as&&m.assistente_sociale!==as)return false;
+    if(q)return(m.cognome||'').toLowerCase().includes(q)||(m.nome||'').toLowerCase().includes(q)||(m.nazionalita||'').toLowerCase().includes(q);
+    return true;
+  });
+  if(!lista.length){tbody.innerHTML='<tr><td colspan="9"><div class="empty"><div class="ico">👤</div><h3>'+(minori.length?'Nessun risultato':'Nessun minore ancora')+'</h3><p>'+(minori.length?'Cambia i filtri.':'Premi "+ Nuovo minore".')+'</p></div></td></tr>';return;}
+  tbody.innerHTML=lista.map(function(m){
+    var ini=[(m.cognome||'').charAt(0),(m.nome||'').charAt(0)].filter(Boolean).join('').toUpperCase()||'?';
+    var nome=[m.cognome,m.nome].filter(Boolean).join(' ')||'—';
+    var eta=m.dob?etaAnni(m.dob)+'a.':'—';
+    var s=m.stato||'attivo';
+    var bs={attivo:'badge-verde',trasferito:'badge-arancio',chiuso:'badge-grigio'}[s]||'badge-grigio';
+    var peiB=m.pei_compilato?'<span class="badge badge-verde">✓ Sì</span>':'<span class="badge badge-grigio">Da fare</span>';
+    var icons=[];
+    var g18=giorniAl18(m.dob);if(g18!==null&&g18<=90)icons.push('<span title="18 anni tra '+g18+'gg" style="color:var(--'+(g18<=30?'rosso':'arancio')+')">🎂</span>');
+    var gP=diffGiorni(m.pds_scadenza);if(gP!==null&&gP<=60)icons.push('<span title="PdS scade tra '+gP+'gg" style="color:var(--'+(gP<=30?'rosso':'arancio')+')">🪪</span>');
+    var gS=diffGiorni(m.stp_scadenza_doc);if(gS!==null&&gS<=60)icons.push('<span title="STP tra '+gS+'gg" style="color:var(--'+(gS<=30?'rosso':'arancio')+')">🏥</span>');
+    return '<tr onclick="apriCartella(\''+m.id+'\')">'+'<td><span class="av-sm">'+esc(ini)+'</span><strong>'+esc(nome)+'</strong></td>'+'<td>'+eta+'</td><td>'+esc(m.nazionalita||'—')+'</td>'+'<td>'+esc(m.assistente_sociale||'—')+'</td>'+'<td>'+esc(m.educatore_ref||'—')+'</td>'+'<td>'+peiB+'</td>'+'<td><span class="badge '+bs+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</span></td>'+'<td style="font-size:16px;letter-spacing:2px;">'+icons.join('')+'</td>'+'<td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();apriCartella(\''+m.id+'\')">Apri →</button></td>'+'</tr>';
+  }).join('');
+}
+
 function filtra(){renderTabella();}
-function aggiornaDash(){var today=new Date().toISOString().slice(0,10),sette=new Date(Date.now()-7*24*3600*1000).toISOString().slice(0,10);document.getElementById('s-tot').textContent=minori.length;document.getElementById('s-pei').textContent=minori.filter(function(m){return m.pei_aree&&Array.isArray(m.pei_aree)&&m.pei_aree.some(function(a){return a.obiettivi&&a.obiettivi.length;});}).length;document.getElementById('s-pei-tot').textContent=minori.length;document.getElementById('s-oggi').textContent=interventi.filter(function(i){return i.data===today;}).length;var con=new Set(interventi.filter(function(i){return i.data>=sette;}).map(function(i){return i.minore_id;}));document.getElementById('s-agg').textContent=minori.filter(function(m){return!con.has(m.id);}).length;var el=document.getElementById('dash-diario'),rec=interventi.slice(0,5);if(!rec.length){el.innerHTML='<div class="empty"><div class="ico">📋</div><h3>Nessun intervento ancora</h3></div>';return;}el.innerHTML=rec.map(function(i){var m=minori.find(function(x){return x.id===i.minore_id;});return renderEntry(i,m?[m.cognome,m.nome].filter(Boolean).join(' '):'—');}).join('');}
-function renderDiario(){var el=document.getElementById('diario-globale');if(!interventi.length){el.innerHTML='<div class="empty"><div class="ico">📋</div><h3>Nessun intervento</h3></div>';return;}el.innerHTML=interventi.slice(0,50).map(function(i){var m=minori.find(function(x){return x.id===i.minore_id;});return renderEntry(i,m?[m.cognome,m.nome].filter(Boolean).join(' '):'—');}).join('');}
-function renderEntry(i,nomeMinore){var d=i.data?new Date(i.data+'T12:00:00'):null,day=d?d.getDate().toString().padStart(2,'0'):'--',mon=d?d.toLocaleString('it-IT',{month:'short'}).toUpperCase():'---';return'<div class="dentry"><div class="ddate"><div class="day">'+day+'</div><div class="mon">'+mon+'</div></div><div class="dbody"><div class="dtipo">'+esc(i.tipo)+'</div><div class="dtesto">'+(esc(i.note)||'<em style="color:var(--ink4)">Nessuna nota</em>')+'</div><div class="dop"><strong style="cursor:pointer;color:var(--blu)" onclick="apriCartella(\''+i.minore_id+'\')">'+esc(nomeMinore)+'</strong> · '+esc(i.operatore||'n.d.')+'</div></div></div>';}
+
+function apriCartella(id){localStorage.setItem('minore_id',id);localStorage.setItem('gest_url',window.location.href);window.location.href='cartella-minore-app.html';}
+
+// ══════ DIARIO ══════
+function renderDiario(){
+  var el=document.getElementById('diario-globale');
+  if(!interventi.length){el.innerHTML='<div class="empty"><div class="ico">📋</div><h3>Nessun intervento</h3></div>';return;}
+  el.innerHTML=interventi.slice(0,50).map(function(i){var m=minori.find(function(x){return x.id===i.minore_id;});return renderEntry(i,m?[m.cognome,m.nome].filter(Boolean).join(' '):'—');}).join('');
+}
+
+function renderEntry(i,nomeMinore){
+  var d=i.data?new Date(i.data+'T12:00:00'):null;
+  var day=d?d.getDate().toString().padStart(2,'0'):'--';
+  var mon=d?d.toLocaleString('it-IT',{month:'short'}).toUpperCase():'---';
+  return '<div class="dentry"><div class="ddate"><div class="day">'+day+'</div><div class="mon">'+mon+'</div></div><div class="dbody"><div class="dtipo">'+esc(i.tipo)+'</div><div class="dtesto">'+(esc(i.note)||'<em style="color:var(--ink4)">Nessuna nota</em>')+'</div><div class="dop"><strong style="cursor:pointer;color:var(--blu)" onclick="apriCartella(\''+i.minore_id+'\')">'+esc(nomeMinore)+'</strong> · '+esc(i.operatore||'n.d.')+'</div></div></div>';
+}
+
+// ══════ NAVIGAZIONE ══════
+function navTo(p){
+  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});
+  document.querySelectorAll('.snlink').forEach(function(x){x.classList.remove('active');});
+  document.getElementById('page-'+p).classList.add('active');
+  var idx={dashboard:0,minori:1,diario:2,statistiche:3,profilo:4}[p];
+  if(idx!==undefined)document.querySelectorAll('.snlink')[idx].classList.add('active');
+  var titoli={dashboard:['Dashboard','Panoramica e alert'],minori:['Minori','Gestione cartelle'],diario:['Diario globale','Tutti gli interventi'],statistiche:['Statistiche','Analisi e report'],profilo:['Profilo','Account']};
+  var t=titoli[p]||[p,''];
+  document.getElementById('ttitle').innerHTML=t[0]+' <small>'+t[1]+'</small>';
+  if(p==='dashboard')aggiornaDash();
+  if(p==='minori')renderTabella();
+  if(p==='diario')renderDiario();
+  if(p==='statistiche')aggiornaStatistiche();
+  if(p==='profilo')caricaProfilo();
+}
+
+// ══════ PROFILO ══════
+async function caricaProfilo(){
+  var r=await db.from('educatori').select('*').eq('id',io.id).single();
+  if(r.data){document.getElementById('p-nome').value=r.data.nome||'';document.getElementById('p-cognome').value=r.data.cognome||'';document.getElementById('p-struttura').value=r.data.struttura||'';aggNome(r.data.nome,r.data.cognome);}
+}
+async function salvaProfilo(){
+  var nome=document.getElementById('p-nome').value.trim(),cognome=document.getElementById('p-cognome').value.trim(),struttura=document.getElementById('p-struttura').value.trim();
+  var r=await db.from('educatori').upsert({id:io.id,nome:nome,cognome:cognome,struttura:struttura,email:io.email});
+  if(r.error){toast('Errore: '+r.error.message,'err');return;}
+  aggNome(nome,cognome);toast('Profilo salvato','ok');
+}
+function aggNome(nome,cognome){var n=[nome,cognome].filter(Boolean).join(' ')||'Educatore';var i=[(nome||'').charAt(0),(cognome||'').charAt(0)].filter(Boolean).join('').toUpperCase()||'EP';document.getElementById('nav-nome').textContent=n;document.getElementById('nav-av').textContent=i;}
+
+// ══════ NUOVO MINORE ══════
+function apriModalNuovo(){
+  ['m-cognome','m-nome','m-struttura','m-naz','m-as','m-edu','m-med','m-psi'].forEach(function(id){document.getElementById(id).value='';});
+  ['m-dob','m-pds-scad','m-stp-scad','m-pros-scad','m-rel-sem'].forEach(function(id){document.getElementById(id).value='';});
+  apriModal('modal-nuovo');
+}
+async function creaMinore(){
+  var cognome=document.getElementById('m-cognome').value.trim(),nome=document.getElementById('m-nome').value.trim();
+  if(!cognome&&!nome){toast('Inserisci almeno il nome','err');return;}
+  var btn=document.getElementById('btn-crea');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+  var r=await db.from('minori').insert({
+    educatore_id:io.id,cognome:cognome,nome:nome,
+    dob:document.getElementById('m-dob').value||null,
+    nazionalita:document.getElementById('m-naz').value.trim(),
+    struttura:document.getElementById('m-struttura').value.trim(),
+    assistente_sociale:document.getElementById('m-as').value.trim(),
+    educatore_ref:document.getElementById('m-edu').value.trim(),
+    mediatore:document.getElementById('m-med').value.trim(),
+    psicologo_ref:document.getElementById('m-psi').value.trim(),
+    pds_scadenza:document.getElementById('m-pds-scad').value||null,
+    stp_scadenza_doc:document.getElementById('m-stp-scad').value||null,
+    pros_scadenza:document.getElementById('m-pros-scad').value||null,
+    relazione_sem_prossima:document.getElementById('m-rel-sem').value||null,
+    stato:'attivo'
+  }).select().single();
+  btn.textContent='Crea cartella';btn.disabled=false;
+  if(r.error){toast('Errore: '+r.error.message,'err');return;}
+  minori.unshift(r.data);chiudiModal('modal-nuovo');toast('Cartella creata!','ok');
+  aggiornaFiltroAS();
+  setTimeout(function(){apriCartella(r.data.id);},400);
+}
+
+// ══════ MODAL ══════
 function apriModal(id){document.getElementById(id).classList.add('open');}
 function chiudiModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-overlay').forEach(function(o){o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('open');});});
+
+// ══════ TOAST ══════
 var tt;
 function toast(msg,type){var el=document.getElementById('toast');el.textContent=(type==='ok'?'✓ ':type==='err'?'✕ ':'ℹ ')+msg;el.className='toast show'+(type?' '+type:'');clearTimeout(tt);tt=setTimeout(function(){el.classList.remove('show');},3000);}
-function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):'';}
-function fmtDate(d){if(!d)return'';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
 </script>
 </body>
 </html>
-
