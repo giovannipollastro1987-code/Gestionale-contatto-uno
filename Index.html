@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Padre Pio">
+<meta name="theme-color" content="#1c2333">
+<title>Gestionale Minori – Consorzio Padre Pio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root{--ink:#1c2333;--ink2:#3d4a5c;--ink3:#6b7a8d;--ink4:#a8b3bf;--bg:#f5f6f8;--bg2:#eceef2;--white:#fff;--blu:#2d6be4;--blu2:#1a4fb0;--blu-light:#e8effe;--verde:#1e8a5e;--verde-light:#e6f5ef;--rosso:#c0392b;--rosso-light:#fdecea;--arancio:#d4600a;--arancio-light:#fdf0e6;--giallo:#b58800;--bordo:#dde1e8;--bordo2:#c8cdd6;--r:10px;--rs:6px;--sh3:0 8px 32px rgba(28,35,51,.14);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.5;}
+#login-screen{display:none;position:fixed;inset:0;background:var(--ink);z-index:1000;align-items:center;justify-content:center;}
+#login-screen.show{display:flex;}
+.login-box{background:var(--white);border-radius:var(--r);padding:36px 40px;width:100%;max-width:400px;box-shadow:var(--sh3);}
+.login-logo{text-align:center;margin-bottom:28px;}
+.login-logo .org{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);margin-bottom:4px;}
+.login-logo .brand{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);}
+.login-logo .brand span{color:var(--blu);}
+.login-box h2{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;color:var(--ink);margin-bottom:20px;text-align:center;}
+.lf{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.lf label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);}
+.lf input{padding:10px 14px;border:1px solid var(--bordo2);border-radius:var(--rs);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);width:100%;}
+.lf input:focus{outline:none;border-color:var(--blu);}
+.lerr{font-size:12px;color:var(--rosso);background:var(--rosso-light);padding:8px 12px;border-radius:var(--rs);margin-bottom:12px;display:none;}
+.ltoggle{font-size:13px;color:var(--ink3);text-align:center;margin-top:14px;}
+.ltoggle a{color:var(--blu);cursor:pointer;text-decoration:underline;}
+#app-shell{display:none;min-height:100vh;}
+#app-shell.show{display:flex;}
+.sidenav{width:228px;background:var(--ink);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+.snlogo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
+.snlogo .org{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:4px;}
+.snlogo .brand{font-family:'DM Serif Display',serif;font-size:18px;color:#fff;line-height:1.2;}
+.snlogo .brand span{color:#6b9ff8;}
+.snuser{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--blu);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0;}
+.snuser .name{font-size:13px;font-weight:500;color:#fff;}
+.snuser .role{font-size:11px;color:rgba(255,255,255,.45);}
+.snlabel{padding:18px 12px 6px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3);}
+.snlink{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:1px 8px;border-radius:var(--rs);font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;transition:background .15s,color .15s;}
+.snlink:hover{background:rgba(255,255,255,.07);color:#fff;}
+.snlink.active{background:var(--blu);color:#fff;}
+.snbottom{margin-top:auto;padding:14px 8px;border-top:1px solid rgba(255,255,255,.08);}
+.main{margin-left:228px;flex:1;display:flex;flex-direction:column;}
+.topbar{background:var(--white);border-bottom:1px solid var(--bordo);padding:0 28px;height:56px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink);flex:1;}
+.topbar-title small{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink3);font-weight:400;margin-left:8px;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--rs);font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;}
+.btn-primary{background:var(--blu);color:#fff;}.btn-primary:hover{background:var(--blu2);}
+.btn-ghost{background:transparent;color:var(--ink2);border:1px solid var(--bordo2);}.btn-ghost:hover{background:var(--bg);}
+.btn-sm{padding:5px 11px;font-size:12px;}
+.page{display:none;padding:28px;}.page.active{display:block;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat{background:var(--white);border:1px solid var(--bordo);border-radius:var(--r);padding:18px 20px;}
+.stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);font-weight:500;margin-bottom:6px;}
+.stat .val{font-size:32px;font-family:'DM Serif Display',serif;color:var(--ink);line-height:1;}
+.stat .sub{font-size:12px;color:var(--ink3);margin-top:4px;}
+.stat.blu{border-left:3px solid var(--blu);}.stat.verde{border-left:3px solid var(--verde);}.stat.arancio{border-left:3px solid var(--arancio);}.stat.giallo{border-left:3px solid var(--giallo);}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.sec-hdr h2{font-family:'DM Serif Display',serif;font-size:16px;color:var(--ink);font-weight:400;}
+.twrap{background:var(--white);border:1px solid var(--bordo);border-radius:var(--r);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead th{background:var(--bg);padding:10px 16px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);border-bottom:1px solid var(--bordo);}
+tbody tr{border-bottom:1px solid var(--bg2);cursor:pointer;transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--blu-light);}
+tbody td{padding:12px 16px;font-size:13px;color:var(--ink2);vertical-align:middle;}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;}
+.badge-verde{background:var(--verde-light);color:var(--verde);}
+.badge-arancio{background:var(--arancio-light);color:var(--arancio);}
+.badge-grigio{background:var(--bg2);color:var(--ink3);}
+.av-sm{width:30px;height:30px;border-radius:50%;background:var(--blu-light);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--blu);margin-right:8px;vertical-align:middle;}
+.diario{display:flex;flex-direction:column;gap:10px;}
+.dentry{background:var(--white);border:1px solid var(--bordo);border-radius:var(--r);padding:14px 18px;display:flex;gap:14px;}
+.ddate{flex-shrink:0;text-align:center;background:var(--blu-light);border-radius:var(--rs);padding:6px 10px;min-width:52px;}
+.ddate .day{font-family:'DM Serif Display',serif;font-size:20px;color:var(--blu);line-height:1;}
+.ddate .mon{font-size:10px;text-transform:uppercase;color:var(--blu2);letter-spacing:1px;}
+.dbody{flex:1;}
+.dtipo{font-size:12px;font-weight:600;color:var(--blu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.dtesto{font-size:13px;color:var(--ink2);line-height:1.5;}
+.dop{font-size:11px;color:var(--ink4);margin-top:5px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(28,35,51,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--white);border-radius:var(--r);width:100%;max-width:520px;box-shadow:var(--sh3);transform:translateY(16px);transition:transform .2s;}
+.modal-overlay.open .modal{transform:translateY(0);}
+.mhdr{padding:18px 22px;border-bottom:1px solid var(--bordo);display:flex;align-items:center;justify-content:space-between;}
+.mhdr h3{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;}
+.mclose{width:28px;height:28px;border:none;background:var(--bg);border-radius:var(--rs);cursor:pointer;font-size:16px;color:var(--ink3);}
+.mbody{padding:20px 22px;}.mfoot{padding:14px 22px;border-top:1px solid var(--bordo);display:flex;gap:8px;justify-content:flex-end;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}.fcol{grid-column:1/-1;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);}
+.field input,.field select{padding:8px 12px;border:1px solid var(--bordo2);border-radius:var(--rs);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--white);width:100%;}
+.sbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.swrap{position:relative;flex:1;}
+.swrap input{width:100%;padding:9px 14px 9px 36px;border:1px solid var(--bordo2);border-radius:var(--rs);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--white);}
+.sico{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--ink4);}
+.fcard{background:var(--white);border:1px solid var(--bordo);border-radius:var(--r);overflow:hidden;margin-bottom:16px;}
+.fcard-hdr{padding:14px 20px;border-bottom:1px solid var(--bordo);background:var(--bg);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.fcard-body{padding:20px;}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:12px 20px;border-radius:var(--r);font-size:13px;box-shadow:var(--sh3);opacity:0;transform:translateY(10px);transition:opacity .25s,transform .25s;pointer-events:none;z-index:9999;}
+.toast.show{opacity:1;transform:translateY(0);}.toast.ok{background:var(--verde);}.toast.err{background:var(--rosso);}
+.empty{text-align:center;padding:48px 24px;color:var(--ink3);}
+.empty .ico{font-size:40px;margin-bottom:12px;}
+.empty h3{font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink2);margin-bottom:6px;font-weight:400;}
+.empty p{font-size:13px;}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+@media(max-width:768px){.sidenav{width:100%;height:56px;bottom:auto;flex-direction:row;overflow-x:auto;}.main{margin-left:0;margin-top:56px;}.stats{grid-template-columns:1fr 1fr;}.fgrid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo"><div class="org">Consorzio</div><div class="brand">Padre <span>Pio</span></div></div>
+    <h2 id="ltitolo">Accedi al gestionale</h2>
+    <div class="lerr" id="lerr"></div>
+    <div class="lf"><label>Email</label><input type="email" id="lemail" placeholder="nome@esempio.it" autocomplete="email"></div>
+    <div class="lf"><label>Password</label><input type="password" id="lpassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn btn-primary" id="lbtn" style="width:100%;justify-content:center;padding:11px;" onclick="doLogin()">Accedi</button>
+    <div class="ltoggle"><span id="ltxt">Non hai un account?</span> <a onclick="toggleMode()"><span id="llnk">Registrati</span></a></div>
+  </div>
+</div>
+<div id="app-shell">
+  <nav class="sidenav">
+    <div class="snlogo"><div class="org">Consorzio</div><div class="brand">Padre <span>Pio</span></div></div>
+    <div class="snuser"><div class="avatar" id="nav-av">EP</div><div><div class="name" id="nav-nome">Educatore</div><div class="role">Operatore</div></div></div>
+    <div class="snlabel">Menu</div>
+    <div class="snlink active" onclick="navTo('dashboard')">📊 Dashboard</div>
+    <div class="snlink" onclick="navTo('minori')">👤 I miei minori</div>
+    <div class="snlink" onclick="navTo('diario')">📋 Diario globale</div>
+    <div class="snlabel">Account</div>
+    <div class="snlink" onclick="navTo('profilo')">⚙ Profilo</div>
+    <div class="snbottom"><div class="snlink" onclick="doLogout()">← Esci</div></div>
+  </nav>
+  <div class="main">
+    <div class="topbar"><div class="topbar-title" id="ttitle">Dashboard <small>Panoramica</small></div><button class="btn btn-primary btn-sm" onclick="apriModalNuovo()">+ Nuovo minore</button></div>
+    <div class="page active" id="page-dashboard">
+      <div class="stats">
+        <div class="stat blu"><div class="lbl">Minori in carico</div><div class="val" id="s-tot">—</div><div class="sub">totale</div></div>
+        <div class="stat verde"><div class="lbl">PEI compilati</div><div class="val" id="s-pei">—</div><div class="sub">su <span id="s-pei-tot">0</span></div></div>
+        <div class="stat arancio"><div class="lbl">Interventi oggi</div><div class="val" id="s-oggi">—</div><div class="sub">registrati</div></div>
+        <div class="stat giallo"><div class="lbl">Da aggiornare</div><div class="val" id="s-agg">—</div><div class="sub">&gt;7 giorni</div></div>
+      </div>
+      <div class="sec-hdr"><h2>Ultimi interventi</h2><button class="btn btn-ghost btn-sm" onclick="navTo('diario')">Vedi tutti →</button></div>
+      <div class="diario" id="dash-diario"><div class="empty"><div class="ico">📋</div><h3>Nessun intervento ancora</h3></div></div>
+    </div>
+    <div class="page" id="page-minori">
+      <div class="sbar"><div class="swrap"><span class="sico">🔍</span><input type="text" placeholder="Cerca…" id="cerca" oninput="filtra()"></div><select class="btn btn-ghost btn-sm" id="filtro-stato" onchange="filtra()" style="cursor:pointer;"><option value="">Tutti</option><option value="attivo">In carico</option><option value="trasferito">Trasferito</option><option value="chiuso">Chiuso</option></select></div>
+      <div class="twrap"><table><thead><tr><th>Minore</th><th>Età</th><th>Nazionalità</th><th>Ingresso</th><th>PEI</th><th>Stato</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
+    </div>
+    <div class="page" id="page-diario"><div class="diario" id="diario-globale"></div></div>
+    <div class="page" id="page-profilo">
+      <div class="fcard" style="max-width:480px;">
+        <div class="fcard-hdr">Il mio profilo</div>
+        <div class="fcard-body">
+          <div class="fgrid">
+            <div class="field"><label>Nome</label><input type="text" id="p-nome"></div>
+            <div class="field"><label>Cognome</label><input type="text" id="p-cognome"></div>
+            <div class="field fcol"><label>Struttura</label><input type="text" id="p-struttura"></div>
+            <div class="field fcol"><label>Email</label><input type="email" id="p-email" disabled style="opacity:.6"></div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:8px;"><button class="btn btn-primary" onclick="salvaProfilo()">Salva</button><button class="btn btn-ghost" onclick="doLogout()">Esci</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-nuovo">
+  <div class="modal">
+    <div class="mhdr"><h3>Nuovo minore</h3><button class="mclose" onclick="chiudiModal('modal-nuovo')">×</button></div>
+    <div class="mbody"><div class="fgrid"><div class="field"><label>Cognome *</label><input type="text" id="m-cognome"></div><div class="field"><label>Nome *</label><input type="text" id="m-nome"></div><div class="field"><label>Data nascita</label><input type="date" id="m-dob"></div><div class="field"><label>Nazionalità</label><input type="text" id="m-naz"></div><div class="field fcol"><label>Struttura</label><input type="text" id="m-struttura"></div></div></div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="chiudiModal('modal-nuovo')">Annulla</button><button class="btn btn-primary" id="btn-crea" onclick="creaMinore()">Crea cartella</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var SUPA_URL='https://hvhoxeaycrwvmrufloqy.supabase.co';
+var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2aG94ZWF5Y3J3dm1ydWZsb3F5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwNDM3MTUsImV4cCI6MjA4OTYxOTcxNX0.5ppOh7cJIB2qdft40I9uLDiP3vsUiBV7jr9klJ304M8';
+var db=null,io=null,reg=false,minori=[],interventi=[];
+window.addEventListener('load',function(){
+  var t=0,loop=setInterval(function(){
+    t++;
+    if(window.supabase&&window.supabase.createClient){
+      clearInterval(loop);
+      db=window.supabase.createClient(SUPA_URL,SUPA_KEY);
+      db.auth.getSession().then(function(r){
+        if(r.data&&r.data.session){avvia(r.data.session);}
+        else{document.getElementById('login-screen').classList.add('show');}
+      }).catch(function(){document.getElementById('login-screen').classList.add('show');});
+    }else if(t>30){clearInterval(loop);document.getElementById('login-screen').classList.add('show');}
+  },200);
+});
+function toggleMode(){reg=!reg;document.getElementById('ltitolo').textContent=reg?'Crea account':'Accedi al gestionale';document.getElementById('ltxt').textContent=reg?'Hai già un account?':'Non hai un account?';document.getElementById('llnk').textContent=reg?'Accedi':'Registrati';document.getElementById('lbtn').textContent=reg?'Crea account':'Accedi';document.getElementById('lerr').style.display='none';}
+async function doLogin(){
+  var email=document.getElementById('lemail').value.trim(),pw=document.getElementById('lpassword').value;
+  if(!email||!pw){mostraErr('Inserisci email e password');return;}
+  var btn=document.getElementById('lbtn');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+  try{
+    var r;
+    if(reg){r=await db.auth.signUp({email:email,password:pw});if(r.error)throw r.error;if(r.data.user&&!r.data.session){btn.textContent='✓ Controlla email';mostraErr('Controlla la tua email per confermare',true);return;}}
+    else{r=await db.auth.signInWithPassword({email:email,password:pw});if(r.error)throw r.error;}
+    await avvia(r.data.session);
+  }catch(e){
+    var msgs={'Invalid login credentials':'Email o password errati','Email not confirmed':'Conferma la tua email','User already registered':'Email già registrata','Password should be at least 6 characters':'Password minimo 6 caratteri'};
+    var m=e.message;for(var k in msgs){if(m.includes(k)){m=msgs[k];break;}}
+    mostraErr(m);btn.textContent=reg?'Crea account':'Accedi';btn.disabled=false;
+  }
+}
+function mostraErr(msg,info){var el=document.getElementById('lerr');el.textContent=msg;el.style.display='block';el.style.background=info?'#e6f5ef':'';el.style.color=info?'#1e8a5e':'';}
+async function avvia(session){io=session.user;document.getElementById('login-screen').classList.remove('show');document.getElementById('app-shell').classList.add('show');document.getElementById('p-email').value=io.email||'';var r=await db.from('educatori').select('nome,cognome').eq('id',io.id).single();if(r.data)aggNome(r.data.nome,r.data.cognome);await caricaDati();}
+async function doLogout(){await db.auth.signOut();location.reload();}
+async function caricaDati(){var r1=await db.from('minori').select('*').order('creato_il',{ascending:false});var r2=await db.from('interventi').select('*').order('data',{ascending:false});minori=r1.data||[];interventi=r2.data||[];aggiornaDash();renderTabella();}
+function navTo(p){document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});document.querySelectorAll('.snlink').forEach(function(x){x.classList.remove('active');});document.getElementById('page-'+p).classList.add('active');var idx={dashboard:0,minori:1,diario:2,profilo:3}[p];if(idx!==undefined)document.querySelectorAll('.snlink')[idx].classList.add('active');var titoli={dashboard:['Dashboard','Panoramica'],minori:['I miei minori','Gestione cartelle'],diario:['Diario globale','Tutti gli interventi'],profilo:['Profilo','Account']};var t=titoli[p]||[p,''];document.getElementById('ttitle').innerHTML=t[0]+' <small>'+t[1]+'</small>';if(p==='dashboard')aggiornaDash();if(p==='minori')renderTabella();if(p==='diario')renderDiario();if(p==='profilo')caricaProfilo();}
+async function caricaProfilo(){var r=await db.from('educatori').select('*').eq('id',io.id).single();if(r.data){document.getElementById('p-nome').value=r.data.nome||'';document.getElementById('p-cognome').value=r.data.cognome||'';document.getElementById('p-struttura').value=r.data.struttura||'';aggNome(r.data.nome,r.data.cognome);}}
+async function salvaProfilo(){var nome=document.getElementById('p-nome').value.trim(),cognome=document.getElementById('p-cognome').value.trim(),struttura=document.getElementById('p-struttura').value.trim();var r=await db.from('educatori').upsert({id:io.id,nome:nome,cognome:cognome,struttura:struttura,email:io.email});if(r.error){toast('Errore: '+r.error.message,'err');return;}aggNome(nome,cognome);toast('Profilo salvato','ok');}
+function aggNome(nome,cognome){var n=[nome,cognome].filter(Boolean).join(' ')||'Educatore';var i=[(nome||'').charAt(0),(cognome||'').charAt(0)].filter(Boolean).join('').toUpperCase()||'EP';document.getElementById('nav-nome').textContent=n;document.getElementById('nav-av').textContent=i;}
+function apriModalNuovo(){['m-cognome','m-nome','m-struttura','m-naz'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('m-dob').value='';apriModal('modal-nuovo');}
+async function creaMinore(){var cognome=document.getElementById('m-cognome').value.trim(),nome=document.getElementById('m-nome').value.trim();if(!cognome&&!nome){toast('Inserisci almeno il nome','err');return;}var btn=document.getElementById('btn-crea');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;var r=await db.from('minori').insert({educatore_id:io.id,cognome:cognome,nome:nome,dob:document.getElementById('m-dob').value||null,nazionalita:document.getElementById('m-naz').value.trim(),struttura:document.getElementById('m-struttura').value.trim(),stato:'attivo'}).select().single();btn.textContent='Crea cartella';btn.disabled=false;if(r.error){toast('Errore: '+r.error.message,'err');return;}minori.unshift(r.data);chiudiModal('modal-nuovo');toast('Cartella creata!','ok');setTimeout(function(){apriCartella(r.data.id);},400);}
+function apriCartella(id){localStorage.setItem('minore_id',id);localStorage.setItem('gest_url',window.location.href);window.location.href='cartella-minore-app.html';}
+function renderTabella(){var tbody=document.getElementById('tbody'),q=(document.getElementById('cerca').value||'').toLowerCase(),stato=document.getElementById('filtro-stato').value;var lista=minori.filter(function(m){if(stato&&(m.stato||'attivo')!==stato)return false;if(q)return(m.cognome||'').toLowerCase().includes(q)||(m.nome||'').toLowerCase().includes(q)||(m.nazionalita||'').toLowerCase().includes(q);return true;});if(!lista.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty"><div class="ico">👤</div><h3>'+(minori.length?'Nessun risultato':'Nessun minore ancora')+'</h3><p>'+(minori.length?'Cambia filtri.':'Premi + Nuovo minore.')+'</p></div></td></tr>';return;}tbody.innerHTML=lista.map(function(m){var ini=[(m.cognome||'').charAt(0),(m.nome||'').charAt(0)].filter(Boolean).join('').toUpperCase()||'?';var nome=[m.cognome,m.nome].filter(Boolean).join(' ')||'—';var eta=m.dob?Math.floor((Date.now()-new Date(m.dob))/(365.25*24*3600*1000))+'a.':'—';var pei=m.pei_aree&&Array.isArray(m.pei_aree)&&m.pei_aree.some(function(a){return a.obiettivi&&a.obiettivi.length;});var s=m.stato||'attivo';var bs={attivo:'badge-verde',trasferito:'badge-arancio',chiuso:'badge-grigio'}[s]||'badge-grigio';return'<tr onclick="apriCartella(\''+m.id+'\')">'+'<td><span class="av-sm">'+esc(ini)+'</span><strong>'+esc(nome)+'</strong></td>'+'<td>'+eta+'</td><td>'+esc(m.nazionalita||'—')+'</td>'+'<td>'+(m.ingresso?fmtDate(m.ingresso):'—')+'</td>'+'<td><span class="badge '+(pei?'badge-verde':'badge-grigio')+'">'+(pei?'✓ Compilato':'Da fare')+'</span></td>'+'<td><span class="badge '+bs+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</span></td>'+'<td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();apriCartella(\''+m.id+'\')">Apri →</button></td>'+'</tr>';}).join('');}
+function filtra(){renderTabella();}
+function aggiornaDash(){var today=new Date().toISOString().slice(0,10),sette=new Date(Date.now()-7*24*3600*1000).toISOString().slice(0,10);document.getElementById('s-tot').textContent=minori.length;document.getElementById('s-pei').textContent=minori.filter(function(m){return m.pei_aree&&Array.isArray(m.pei_aree)&&m.pei_aree.some(function(a){return a.obiettivi&&a.obiettivi.length;});}).length;document.getElementById('s-pei-tot').textContent=minori.length;document.getElementById('s-oggi').textContent=interventi.filter(function(i){return i.data===today;}).length;var con=new Set(interventi.filter(function(i){return i.data>=sette;}).map(function(i){return i.minore_id;}));document.getElementById('s-agg').textContent=minori.filter(function(m){return!con.has(m.id);}).length;var el=document.getElementById('dash-diario'),rec=interventi.slice(0,5);if(!rec.length){el.innerHTML='<div class="empty"><div class="ico">📋</div><h3>Nessun intervento ancora</h3></div>';return;}el.innerHTML=rec.map(function(i){var m=minori.find(function(x){return x.id===i.minore_id;});return renderEntry(i,m?[m.cognome,m.nome].filter(Boolean).join(' '):'—');}).join('');}
+function renderDiario(){var el=document.getElementById('diario-globale');if(!interventi.length){el.innerHTML='<div class="empty"><div class="ico">📋</div><h3>Nessun intervento</h3></div>';return;}el.innerHTML=interventi.slice(0,50).map(function(i){var m=minori.find(function(x){return x.id===i.minore_id;});return renderEntry(i,m?[m.cognome,m.nome].filter(Boolean).join(' '):'—');}).join('');}
+function renderEntry(i,nomeMinore){var d=i.data?new Date(i.data+'T12:00:00'):null,day=d?d.getDate().toString().padStart(2,'0'):'--',mon=d?d.toLocaleString('it-IT',{month:'short'}).toUpperCase():'---';return'<div class="dentry"><div class="ddate"><div class="day">'+day+'</div><div class="mon">'+mon+'</div></div><div class="dbody"><div class="dtipo">'+esc(i.tipo)+'</div><div class="dtesto">'+(esc(i.note)||'<em style="color:var(--ink4)">Nessuna nota</em>')+'</div><div class="dop"><strong style="cursor:pointer;color:var(--blu)" onclick="apriCartella(\''+i.minore_id+'\')">'+esc(nomeMinore)+'</strong> · '+esc(i.operatore||'n.d.')+'</div></div></div>';}
+function apriModal(id){document.getElementById(id).classList.add('open');}
+function chiudiModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(function(o){o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('open');});});
+var tt;
+function toast(msg,type){var el=document.getElementById('toast');el.textContent=(type==='ok'?'✓ ':type==='err'?'✕ ':'ℹ ')+msg;el.className='toast show'+(type?' '+type:'');clearTimeout(tt);tt=setTimeout(function(){el.classList.remove('show');},3000);}
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):'';}
+function fmtDate(d){if(!d)return'';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+</script>
+</body>
+</html>
+
